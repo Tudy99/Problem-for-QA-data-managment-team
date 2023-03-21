@@ -51,7 +51,7 @@ class Program
     }
 }
 
-punctul b al problemei e mai jos.
+//punctul b al problemei e mai jos.
 
 csharp
 Copy code
