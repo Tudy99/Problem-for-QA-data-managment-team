@@ -1,0 +1,114 @@
+using System;
+using System.Diagnostics;
+using System.Threading;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        string numeProces = args[0];
+        int durataViata = int.Parse(args[1]);
+        int frecventaMinute = int.Parse(args[2]);
+
+        Console.WriteLine($"Monitoring process '{numeProces}' with maximum lifetime of {durataViata} minutes, every {frecventaMinute} minutes.");
+        Console.WriteLine("Press 'a' to quit.");
+
+        while (true)
+        {
+            // Check if the user wants to quit
+            if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.A)
+            {
+                Console.WriteLine("Renutare");
+                break;
+            }
+
+            // Check if the process is running
+            Process[] processes = Process.GetProcessesByName(numeProces);
+            if (processes.Length == 0)
+            {
+                Console.WriteLine($"No process '{numeProces}' found. Se continua monitorizarea");
+                Thread.Sleep(frecventaMinute * 60 * 1000);
+                continue;
+            }
+
+            // Check if the process has been running for too long
+            foreach (Process process in processes)
+            {
+                TimeSpan lifetime = DateTime.Now - process.StartTime;
+                if (lifetime.TotalMinutes > durataViata)
+                {
+                    Console.WriteLine($"Process '{numeProces}' with PID {process.Id} has been running for {lifetime.TotalMinutes} minutes. Killing the process...");
+                    process.Kill();
+                }
+                else
+                {
+                    Console.WriteLine($"Process '{numeProces}' with PID {process.Id} has been running for {lifetime.TotalMinutes} minutes. Continuing to monitor...");
+                }
+            }
+
+            Thread.Sleep(frecventa in minute * 60 * 1000);
+        }
+    }
+}
+
+punctul b al problemei e mai jos.
+
+csharp
+Copy code
+using NUnit.Framework;
+using System.Diagnostics;
+using System.Threading;
+
+[TestFixture]
+public class ProgramTests
+{
+    [Test]
+    public void TestProcessMonitoringAndKilling()
+    {
+        // Arrange
+        string numeProces = "notepad";
+        int durataViata = 1;
+        int frecventaMinute = 1;
+        Process process = Process.Start(numeProces);
+
+        // Act
+        Thread.Sleep(2 * 60 * 1000); // Wait for process to run for 2 minutes
+        process.Refresh();
+
+        // Assert
+        Assert.IsFalse(process.HasExited);
+
+        // Act
+        Thread.Sleep(2 * 60 * 1000); // Wait for process to run for another 2 minutes
+        process.Refresh();
+
+        // Assert
+        Assert.IsTrue(process.HasExited);
+    }
+
+    [Test]
+    public void TestProcessMonitoringWithoutKilling()
+    {
+       
+        string numeProces = "notepad";
+        int durataViata = 5;
+        int frecventaMinute = 1;
+        Process process = Process.Start(numeProces);
+       
+        Thread.Sleep(2 * 60 * 1000); // asteptam sa ruleze pt 2 minute
+       
+        Assert.IsFalse(process.HasExited);
+
+        Thread.Sleep(2 * 60 * 1000); // mai asteptam sa rulez inca 2 minute
+        process.Refresh();
+
+       
+        Assert.IsFalse(process.HasExited);
+    }
+}
+
+
+
+
+
+
